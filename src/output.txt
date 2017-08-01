@@ -1,0 +1,43 @@
+Steam 社区 :: al
+http://steamcommunity.com/id/afarnsworth/badges
+40
+10,296 点经验值
+0:	收购总监:	903点经验值
+1:	2016Steam大奖提名委员会:	100点经验值
+2:	帐户拥有年限:	650点经验值
+3:	SummerPicnicLvl1:	1级,100点经验值
+4:	社区领袖:	500点经验值
+5:	怪兽夏日徽章:	200点经验值
+6:	SummerSale2015:	1级,100点经验值
+7:	Holiday2014:	1级,100点经验值
+8:	PartnerReactionEngineer:	1级,100点经验值
+9:	ReactorFacilityManager:	5级,500点经验值
+10:	ChickenChaser:	1级,100点经验值
+11:	拍卖参与者:	150点经验值
+12:	2014年Steam夏季大冒险-蓝队:	100点经验值
+13:	FoilAdventurer2014:	1级,100点经验值
+14:	Adventurer2014:	25级,2,500点经验值
+15:	StoneSkull:	1级,100点经验值
+16:	BrokenAge1:	1级,100点经验值
+17:	Rank1:	1级,100点经验值
+18:	Rapid:	1级,100点经验值
+19:	SnowGlobe2013:	4级,400点经验值
+20:	TheGatekeeper:	1级,100点经验值
+21:	Steam硬件测试候选人:	150点经验值
+22:	Reich:	1级,100点经验值
+23:	Ravenholm:	3级,300点经验值
+24:	Hello?:	1级,100点经验值
+25:	VacationVeteran:	5级,500点经验值
+26:	Rusty:	1级,100点经验值
+27:	SawmillStrongmann:	1级,100点经验值
+28:	Maggy:	2级,200点经验值
+29:	集换式卡牌测试员:	100点经验值
+30:	Valve员工:	1,000点经验值
+31:	Steam节庆特卖2012:	100点经验值
+32:	Steam夏日特卖2012:	100点经验值
+33:	Steam节庆特卖2011:	65点经验值
+34:	Steam夏令营:	83点经验值
+35:	土豆包:	95点经验值
+36:	伟大的Steam寻宝大行动:	100点经验值
+========================================================================
+Success....
