@@ -1,15 +1,5 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 #coding=utf-8
-
-############ 根据用户的url链接获取其信息 ###############################################
-#1 用户名
-#2 个人签名
-#3 主页链接
-#4 级别
-#5 徽章的数量（徽章的名称,徽章的等级）
-#6 游戏的数量 （游戏的名称，游戏时长）
-#7 参加组的数量
-#8 好友数量 （好友名称，好友链接）
 
 
 import os
@@ -120,7 +110,7 @@ def get_usergames(url):
 
 
 def get_usergroups(url):
-    print("=========================获取每个用户所属的组============================================")
+    print("=========================get users groups============================================")
     group_url = url+"/groups/"
     bsObj = get_BeautifulSoup(group_url)
     if bsObj == None:
@@ -140,7 +130,7 @@ def get_usergroups(url):
 
 
 def get_userfriends(url):
-    print("=========================获取每个用户所有的朋友名字及其链接===============================")
+    print("=========================get friends name and url===============================")
     friend_url =  url+"/friends/"
     bsObj = get_BeautifulSoup(friend_url)
     if bsObj == None:
@@ -161,13 +151,10 @@ def get_userfriends(url):
     return friends_info
 
 def Run(url):
-    req = urllib.request.Request(url, headers = headers)
-    response = urlopen(req).read()
-    response = response.decode('UTF-8').encode(type)
-    bsObj = BeautifulSoup(response)
+    bsObj = get_BeautifulSoup(url)
     if bsObj.find('div', {'class':'profile_private_info'}) != None:
-        print("保密")
-        return  get_user_basicInfo + ["NULL"] * 7
+        print("secret")
+        return  (get_user_basicInfo(url) + ["NULL"] * 7)
     
     user_basicInfo = get_user_basicInfo(url)
     level_experValue = get_level_experValue(url)
