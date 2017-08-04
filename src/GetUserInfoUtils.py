@@ -1,14 +1,18 @@
 #! /usr/bin/env python3
-#coding=utf-8
+# -*- coding:utf-8 -*-
 
 
 import os
 import re
 import subprocess
 import json
+import time
 
 import urllib.request
+import urllib.error
 from urllib.request import urlopen
+from urllib.error import HTTPError
+
 from bs4 import BeautifulSoup
 
 from prettytable import PrettyTable
@@ -22,16 +26,21 @@ type = sys.getfilesystemencoding()
 
 headers = {
         "Accept-Language":"zh-CN,zh;q=0.8,en;q=0.6",
-        "Proxy-Connection":"keep-alive"
-}
+        "Proxy-Connection":"keep-alive",
+        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+    }
 
+#headers = {
+#        "Accept-Language":"zh-CN,zh;q=0.8,en;q=0.6",
+#        "Proxy-Connection":"keep-alive",
+#        "User-Agent": "super happy flair bot by /u/spladug"
+#    }
 def get_BeautifulSoup(url):
     req = urllib.request.Request(url, headers = headers)
     response = urlopen(req).read()
-    response = response.decode('UTF-8').encode(type)
-    bsObj = BeautifulSoup(response)
+    #response = response.decode('UTF-8').encode(type)
+    bsObj = BeautifulSoup(response,"lxml")
     return bsObj
-
 
 
 def get_user_basicInfo(url):
@@ -39,6 +48,7 @@ def get_user_basicInfo(url):
     title = bsObj.find('title').text.strip().split('::')[1].replace(' ','')
     desc_meta = bsObj.find('meta', {'name':'Description'})
     desc = "NULL" if desc_meta == None else desc_meta.attrs['content']
+    print(title)
     return [title, desc]
 
 
@@ -60,8 +70,14 @@ def get_level_experValue(url):
 
     level = "0" if level_span == None else level_span.text.strip()
     experience_value = "0" if experience_span == None else experience_span.text.strip().split(' ')[0].replace(',','')
-    remain_info = "NULL" if remain_div == None else remain_div.text.strip()
     
+    next_level = "0"
+    remain_exper_value = "0"
+    if remain_div != None:
+        next_level = remain_div.text.strip().split(' ')[1]
+        remain_exper_value = remain_div.text.strip().split(' ')[3]
+
+
     badget_infos = bsObj.findAll('div',{'class':'badge_info_description'})
     if badget_infos == None:
         return [ level, experience_value, remain_info, "NULL"]
@@ -69,16 +85,17 @@ def get_level_experValue(url):
     badget_info_list = []
     for badget in badget_infos:
         badget_name = badget.find('div',{'class':'badge_info_title'}).text.strip().replace(' ','').replace('^M','').replace('\t','')
-        badget_value = badget.findAll('div')[1].text.strip().replace(' ','').replace('^M','').replace('\r','').replace('\n','').replace('\t','')
+        badget_value = badget.findAll('div')[1].text.strip().replace(' ','').replace('^M','').replace('\r','').replace('\n','').replace('\t','').replace('级','').replace('点经验值','')
         badget_info = badget_name + ":" + badget_value
         badget_info_list.append(badget_info)
     
     badget_info_str = "|".join(badget_info_list)
-    print(level)
-    print(experience_value)
-    print(remain_info)
-    print(badget_info_str)
-    return [ level, experience_value, remain_info, badget_info_str]
+    #print(level)
+    #print(experience_value)
+    #print(next_level)
+    #print(remain_exper_value)
+    #print(badget_info_str)
+    return [ level, experience_value, next_level, remain_exper_value, badget_info_str]
 
 
 def get_usergames(url):
@@ -87,7 +104,7 @@ def get_usergames(url):
     game_js = bsObj.find('script', {'language':'javascript'})
     if game_js == None:
         return ""
-    print("JS length:\t"+str(len(game_js)))
+    #print("JS length:\t"+str(len(game_js)))
     if game_js.text == "":
         return ""
     gamelist_json = game_js.text.strip().split('\n')[0].split('=')[1].replace('\r','')[1:-1]
@@ -104,13 +121,13 @@ def get_usergames(url):
         game_list.append(this_game_info)
 
     game_info = "|".join(game_list)
-    print(game_info)
+    #print(game_info)
     return game_info
 
 
 
 def get_usergroups(url):
-    print("=========================get users groups============================================")
+    #print("=========================get users groups============================================")
     group_url = url+"/groups/"
     bsObj = get_BeautifulSoup(group_url)
     if bsObj == None:
@@ -130,7 +147,7 @@ def get_usergroups(url):
 
 
 def get_userfriends(url):
-    print("=========================get friends name and url===============================")
+    #print("=========================get friends name and url===============================")
     friend_url =  url+"/friends/"
     bsObj = get_BeautifulSoup(friend_url)
     if bsObj == None:
@@ -147,40 +164,41 @@ def get_userfriends(url):
         friend_list.append(friend_info)
 
     friends_info = "|".join(friend_list)
-    print(friends_info)
+    #print(friends_info)
     return friends_info
 
 def Run(url):
     bsObj = get_BeautifulSoup(url)
     if bsObj.find('div', {'class':'profile_private_info'}) != None:
-        print("secret")
+        print(url)
         return  (get_user_basicInfo(url) + ["NULL"] * 7)
     
-    user_basicInfo = get_user_basicInfo(url)
-    level_experValue = get_level_experValue(url)
-    games_info  = get_usergames(url)
-    groups_info = get_usergroups(url)
-    friends_info = get_userfriends(url)
-    
-    all_infos = []
-    all_infos += user_basicInfo
-    all_infos += level_experValue
-    all_infos.append(games_info)
-    all_infos.append(groups_info)
-    all_infos.append(friends_info)
-    print('\n\nAll infos:\n')
-    print((str(all_infos)))
-    return all_infos
+    #user_basicInfo = get_user_basicInfo(url)
+    #level_experValue = get_level_experValue(url)
+    #games_info  = get_usergames(url)
+    #groups_info = get_usergroups(url)
+    #friends_info = get_userfriends(url)
+    #
+    #all_infos = []
+    #all_infos += user_basicInfo
+    #all_infos += level_experValue
+    #all_infos.append(games_info)
+    #all_infos.append(groups_info)
+    #all_infos.append(friends_info)
+    #print('\n\nAll infos:\n')
+    #print((str(all_infos)))
+    #return all_infos
 
 
 if __name__=='__main__':
     #get_user_basicInfo("http://steamcommunity.com/id/afarnsworth/")
     #get_level_experValue("http://steamcommunity.com/id/afarnsworth")
-    #get_game_list("http://steamcommunity.com/id/afarnsworth")
+    #get_usergames("http://steamcommunity.com/id/afarnsworth")
     #get_userfriends("http://steamcommunity.com/id/afarnsworth")
-    #Run("http://steamcommunity.com/id/afarnsworth")
+    Run("http://steamcommunity.com/id/afarnsworth")
+    #Run("http://steamcommunity.com/id/0000681_222")
     #Run("http://steamcommunity.com/id/76561198407744512")
-    get_user_basicInfo("http://steamcommunity.com/id/76561198407744512")
+    #get_user_basicInfo("http://steamcommunity.com/id/76561198407744512")
     #get_game_list("http://steamcommunity.com/id/76561198407744512")
     #get_usergroups("http://steamcommunity.com/id/76561198407744512")
     #get_usergroups("http://steamcommunity.com/id/afarnsworth")

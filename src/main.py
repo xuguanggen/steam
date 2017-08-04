@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 #coding=utf-8
 
-################# 多线程爬取用户信息 ###########################
 
 import sys
 import os
@@ -14,25 +13,22 @@ from GetUserInfoUtils import Run
 type = sys.getfilesystemencoding()
 
 
-NumThreads = 200
+NumThreads = 100
 url_head = "http://steamcommunity.com/"
 
-def receive_threadMsg(queue):
-    while(True):
-        msg = queue.get()
-        if (msg == 'Done'):
-            break
 
-def run_thread(url_batch, queue):
+def run_thread(url_batch, queue, f_out):
     for url in url_batch:
         url = url_head + url.strip()
-        Run(url)
-
-    queue.put('Done')
+        print(url)
+        user_info = Run(url)
+        f_out.write(str(user_info)+'\n')
+        #time.sleep(1)
+    f_out.close()
 
 
 if __name__=='__main__':
-    File_path = '../data/SteamTradingCardsGroup/user_url.txt'
+    File_path = '../data/url_uniq.txt'
     f_url_in = open(File_path, 'r')
     url_list = []
     for url in f_url_in:
@@ -44,6 +40,7 @@ if __name__=='__main__':
     print(str(num_urls_per_thread))
 
     
+    queue = Queue()
     for thread_idx in range(NumThreads):
         url_batch = []
         if thread_idx == NumThreads - 1:
@@ -52,12 +49,6 @@ if __name__=='__main__':
             url_batch = url_list[thread_idx * num_urls_per_thread:(thread_idx + 1) * num_urls_per_thread]
         print(str(thread_idx)+":"+str(len(url_batch)))
 
-        queue = Queue()
-        receive_p = Process(target = receive_threadMsg, args=((queue),))
-        receive_p.daemon = True
-        receive_p.start()
-
-        _start = time.time()
-        run_thread(url_batch, queue)
-        receive_p.join()
-        print("Thread "+str(thread_idx)+" completed, Time:\t"+(str((time.time() - _start)/3600)))
+        f_out = open('../data/userdata/thread_'+str(thread_idx)+'.csv','w')
+        p = Process(target = run_thread, args=[url_batch, queue, f_out])
+        p.start()
