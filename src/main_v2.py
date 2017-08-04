@@ -39,11 +39,10 @@ if __name__=='__main__':
     idx = 0
     for url in url_list:
         url = url_head + url.strip()
-        Run(url)
-        #user_info = Run(url)
-        #f_out.write(str(user_info)+'\n')
-        #print(str(idx)+', completed....')
-        #time.sleep(1)
+        #Run(url)
+        user_info = Run(url)
+        f_out.write(str(user_info)+'\n')
+        print(str(idx)+', completed....')
+        time.sleep(10)
         idx += 1
-        print(str(idx))
     f_out.close()
