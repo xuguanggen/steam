@@ -10,6 +10,7 @@ const fs = require('fs');
 
 request
   .get(url)
+  .set('Accept-Language', 'zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4')
   .end(function(err, res){
      fs.writeFile(outhtml , res.text, {
         encoding: 'utf8'

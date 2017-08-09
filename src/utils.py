@@ -69,13 +69,13 @@ def get_userbadges_page(htmlPath, url):
     remain_div = bsObj.find('div', {'class':'profile_xp_block_remaining'})
 
     level = "NULL" if level_span == None else level_span.text.strip()
-    experience_value = "NULL" if experience_span == None else experience_span.text.strip().split(' ')[1].replace(',','')
+    experience_value = "NULL" if experience_span == None else experience_span.text.strip().split(' ')[0].replace(',','')
     
     next_level = "NULL"
     remain_exper_value = "NULL"
     if remain_div != None:
-        next_level = remain_div.text.strip().split(' ')[-1].replace(',','')
-        remain_exper_value = remain_div.text.strip().split(' ')[0].replace(',','')
+        next_level = remain_div.text.strip().split(' ')[1].replace(',','')
+        remain_exper_value = remain_div.text.strip().split(' ')[3].replace(',','')
 
 
     badget_infos = bsObj.findAll('div',{'class':'badge_info_description'})
@@ -85,7 +85,7 @@ def get_userbadges_page(htmlPath, url):
     badget_info_list = []
     for badget in badget_infos:
         badget_name = badget.find('div',{'class':'badge_info_title'}).text.strip().replace(' ','').replace('^M','').replace('\t','')
-        badget_value = badget.findAll('div')[1].text.strip().replace(' ','').replace('^M','').replace('\r','').replace('\n','').replace('\t','')
+        badget_value = badget.findAll('div')[1].text.strip().replace(' ','').replace('^M','').replace('\r','').replace('\n','').replace('\t','').replace('点经验值','')
         badget_info = badget_name + ":" + badget_value
         badget_info_list.append(badget_info)
     
@@ -126,7 +126,7 @@ def get_usergames_page(htmlPath):
     for game in src_data:
         appid = str(game['appid']) if "appid" in game.keys() else "NULL"
         name = str(game['name']) if "name" in game.keys() else "NULL"
-        hours_forever = str(game['hours_forever']) if "hours_forever" in game.keys() else "NULL"
+        hours_forever = str(game['hours_forever']) if "hours_forever" in game.keys() else "-1"
         #print('\t'.join([appid, name, hours, hours_forever]))
         this_game_info = ",".join([appid, name, hours_forever])
         game_list.append(this_game_info)
@@ -166,76 +166,68 @@ def get_userfriends_page(htmlPath):
 
 def get_pages(name, url):
     bsObj = get_BeautifulSoup(url)
-    print(url)
+    #print(url)
     if bsObj.find('div', {'class':'profile_private_info'}) != None:
-        print("Secret:\t"+url)
-        return
+        print(name)
+        return 'NULL'
 
+    #title = bsObj.find('span',{'class':'actual_persona_name'}).text.strip()
     title = bsObj.find('title').text.strip().split('::')[1].replace(' ','')
     desc_meta = bsObj.find('meta', {'name':'Description'})
-    desc = "NULL" if desc_meta == None else desc_meta.attrs['content']
+    desc = 'NULL' if desc_meta == None else desc_meta.attrs['content']
 
-    ##### find badges
+    ###### find badges
     badges_info = "NULL"
-    
-    if bsObj.find('a',{'href': url+'/badges/'}) != None:
+
+    if bsObj.find('a',{'href': url+'/badges/'}) != None and bsObj.find('a',{'href': url+'/games/?tab=all'}) != None and bsObj.find('a',{'href': url+'/groups/'}) != None and bsObj.find('a',{'href': url+'/friends/'}) != None:
         badges_url = url + '/badges'
         badge_html = '../pages/'+name+'_badge.html'
         subprocess.run("node getPagehtml.js '"+badges_url+"' "+badge_html, shell=True, check=True)
         badges_info = get_userbadges_page(badge_html, url)
         subprocess.run("rm "+badge_html, shell=True, check=True)
-    else:
-        print("badges not found...")
 
-    #### find games
-    games_info = "NULL"
+        #### find games
+        games_info = "NULL"
     
-    if bsObj.find('a',{'href': url+'/games/?tab=all'}) != None:
         game_url = url + '/games/?tab=all'
         game_html = '../pages/'+name+'_game.html'
         subprocess.run("node getPagehtml.js '"+game_url+"' "+game_html, shell=True, check=True)
         games_info = get_usergames_page(game_html)
         subprocess.run("rm "+game_html, shell=True, check=True)
-    else:
-        print("games not found...")
 
 
-    #### find groups
-    groups_info = "NULL"
+        #### find groups
+        groups_info = "NULL"
     
-    if bsObj.find('a',{'href': url+'/groups/'}) != None:
         group_url = url + '/groups'
         group_html = '../pages/'+name+'_group.html'
         subprocess.run("node getPagehtml.js '"+group_url+"' "+group_html, shell=True, check=True)
         groups_info = get_usergroups_page(group_html)
         subprocess.run("rm "+group_html, shell=True, check=True)
-    else:
-        print("groups not found...")
 
 
-    #### find friends
-    friends_info = "NULL"
+        #### find friends
+        friends_info = "NULL"
     
-    if bsObj.find('a',{'href': url+'/friends/'}) != None:
         friend_url = url + '/friends'
         friend_html = '../pages/'+name+'_friend.html'
         subprocess.run("node getPagehtml.js '"+friend_url+"' "+friend_html, shell=True, check=True)
         friends_info = get_userfriends_page(friend_html)
-        #subprocess.run("rm "+friend_html, shell=True, check=True)
+        subprocess.run("rm "+friend_html, shell=True, check=True)
+
+
+        all_infos = []
+        all_infos.append(title)
+        all_infos.append(desc)
+        all_infos += badges_info
+        all_infos.append(games_info)
+        all_infos.append(groups_info)
+        all_infos.append(friends_info)
+
+        #print(str(all_infos))
+        return all_infos
     else:
-        print("friends not found...")
-
-
-    all_infos = []
-    all_infos.append(title)
-    all_infos.append(desc)
-    all_infos += badges_info
-    all_infos.append(games_info)
-    all_infos.append(groups_info)
-    all_infos.append(friends_info)
-
-    #print(str(all_infos))
-    return all_infos
+        return 'NULL'
 
 if __name__=='__main__':
     #get_user_basicInfo("http://steamcommunity.com/id/afarnsworth/")
@@ -243,7 +235,8 @@ if __name__=='__main__':
     #get_usergames("http://steamcommunity.com/id/afarnsworth")
     #get_userfriends("http://steamcommunity.com/id/afarnsworth")
     #Run("http://steamcommunity.com/id/afarnsworth")
-    get_pages('gishyfishy',"http://steamcommunity.com/id/gishyfishy")
+    get_pages('afarnsworth',"http://steamcommunity.com/id/afarnsworth")
+    #get_pages('gishyfishy',"http://steamcommunity.com/id/afarnsworth")
     #Run("http://steamcommunity.com/id/0000681_222")
     #Run("http://steamcommunity.com/id/76561198407744512")
     #get_user_basicInfo("http://steamcommunity.com/id/76561198407744512")
@@ -256,3 +249,4 @@ if __name__=='__main__':
     #get_usergroups()
     #get_userfriends()
     print("Success....")
+
