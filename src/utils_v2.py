@@ -132,7 +132,7 @@ def get_usergames_page(htmlPath):
         game_list.append(this_game_info)
 
     game_info = "|".join(game_list)
-    #print(game_info)
+    print(game_info)
     return game_info
 
 
@@ -204,34 +204,16 @@ def get_pages(url, badge_html, game_html, group_html, friend_html):
     return all_infos
 
 if __name__=='__main__':
-    url = sys.argv[1]
-    badge_html = sys.argv[2]
-    game_html = sys.argv[3]
-    group_html = sys.argv[4]
-    friend_html = sys.argv[5]
-    out_file = sys.argv[6]
-    all_infos = get_pages(url, badge_html, game_html, group_html, friend_html)
-    f_out = open(out_file, 'a')
-    f_out.write(str(all_infos)+'\n')
-    f_out.close()
+    #url = sys.argv[1]
+    #badge_html = sys.argv[2]
+    #game_html = sys.argv[3]
+    #group_html = sys.argv[4]
+    #friend_html = sys.argv[5]
+    #out_file = sys.argv[6]
+    #all_infos = get_pages(url, badge_html, game_html, group_html, friend_html)
+    #f_out = open(out_file, 'a')
+    #f_out.write(str(all_infos)+'\n')
+    #f_out.close()
 
-    #get_user_basicInfo("http://steamcommunity.com/id/afarnsworth/")
-    #get_level_experValue("http://steamcommunity.com/id/afarnsworth")
-    #get_usergames("http://steamcommunity.com/id/afarnsworth")
-    #get_userfriends("http://steamcommunity.com/id/afarnsworth")
-    #Run("http://steamcommunity.com/id/afarnsworth")
-    #get_pages('afarnsworth',"http://steamcommunity.com/id/afarnsworth")
-    #get_pages('gishyfishy',"http://steamcommunity.com/id/afarnsworth")
-    #Run("http://steamcommunity.com/id/0000681_222")
-    #Run("http://steamcommunity.com/id/76561198407744512")
-    #get_user_basicInfo("http://steamcommunity.com/id/76561198407744512")
-    #get_game_list("http://steamcommunity.com/id/76561198407744512")
-    #get_usergroups("http://steamcommunity.com/id/76561198407744512")
-    #get_usergroups("http://steamcommunity.com/id/afarnsworth")
-    #get_level_experValue("http://steamcommunity.com/id/76561198407744512")
-    #get_userfriends("http://steamcommunity.com/id/76561198407744512")
-    #run()
-    #get_usergroups()
-    #get_userfriends()
-    print("Success....")
 
+    get_usergames_page('./tttttttttttt')
