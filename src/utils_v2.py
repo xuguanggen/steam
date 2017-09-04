@@ -132,7 +132,7 @@ def get_usergames_page(htmlPath):
         game_list.append(this_game_info)
 
     game_info = "|".join(game_list)
-    print(game_info)
+    #print(game_info)
     return game_info
 
 
@@ -204,16 +204,16 @@ def get_pages(url, badge_html, game_html, group_html, friend_html):
     return all_infos
 
 if __name__=='__main__':
-    #url = sys.argv[1]
-    #badge_html = sys.argv[2]
-    #game_html = sys.argv[3]
-    #group_html = sys.argv[4]
-    #friend_html = sys.argv[5]
-    #out_file = sys.argv[6]
-    #all_infos = get_pages(url, badge_html, game_html, group_html, friend_html)
-    #f_out = open(out_file, 'a')
-    #f_out.write(str(all_infos)+'\n')
-    #f_out.close()
+    url = sys.argv[1]
+    badge_html = sys.argv[2]
+    game_html = sys.argv[3]
+    group_html = sys.argv[4]
+    friend_html = sys.argv[5]
+    out_file = sys.argv[6]
+    all_infos = get_pages(url, badge_html, game_html, group_html, friend_html)
+    f_out = open(out_file, 'a')
+    f_out.write(str(all_infos)+'\n')
+    f_out.close()
 
 
-    get_usergames_page('./tttttttttttt')
+    #get_usergames_page('./tttttttttttt')
