@@ -10,4 +10,3 @@ do
 }&
 done
 wait
-echo 'all fucked...'

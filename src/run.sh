@@ -41,4 +41,3 @@ do
         rm $friend_html
     fi
 done
-echo $input_file' fuck'
