@@ -41,7 +41,4 @@ do
         rm $friend_html
     fi
 done
-#wait
-#cat ../tmp/* > $out_file
-#rm ../tmp/*
 echo $input_file' fuck'

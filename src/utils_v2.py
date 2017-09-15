@@ -30,11 +30,6 @@ headers = {
         "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
     }
 
-#headers = {
-#        "Accept-Language":"zh-CN,zh;q=0.8,en;q=0.6",
-#        "Proxy-Connection":"keep-alive",
-#        "User-Agent": "super happy flair bot by /u/spladug"
-#    }
 def get_BeautifulSoup(url):
     req = urllib.request.Request(url, headers = headers)
     response = urlopen(req).read()
@@ -107,7 +102,6 @@ def get_usergroups_page(htmlPath):
         group_list.append(group_info)
     
     groups_info = "|".join(group_list)
-    #print(groups_info)
     return groups_info
 
 
@@ -116,18 +110,15 @@ def get_usergames_page(htmlPath):
     game_js = bsObj.find('script', {'language':'javascript'})
     if game_js == None:
         return ""
-    #print("JS length:\t"+str(len(game_js)))
     if game_js.text == "":
         return ""
     gamelist_json = game_js.text.strip().split('\n')[0].split('=')[1].replace('\r','')[1:-1]
     src_data = json.loads(gamelist_json)
-    #print(str((data[0])))
     game_list = []
     for game in src_data:
         appid = str(game['appid']) if "appid" in game.keys() else "NULL"
         name = str(game['name']) if "name" in game.keys() else "NULL"
         hours_forever = str(game['hours_forever']) if "hours_forever" in game.keys() else "-1"
-        #print('\t'.join([appid, name, hours, hours_forever]))
         this_game_info = ",".join([appid, name, hours_forever])
         game_list.append(this_game_info)
 
@@ -194,6 +185,7 @@ def get_pages(url, badge_html, game_html, group_html, friend_html):
 
     all_infos = []
     all_infos.append(title)
+    all_infos.append(url)
     all_infos.append(desc)
     all_infos += badges_info
     all_infos.append(games_info)
@@ -216,4 +208,3 @@ if __name__=='__main__':
     f_out.close()
 
 
-    #get_usergames_page('./tttttttttttt')
